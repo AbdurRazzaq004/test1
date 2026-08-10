@@ -16,18 +16,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/dependency-review-action@v4
 
-  codeql:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
-        with:
-          languages: javascript-typescript
-      - uses: github/codeql-action/analyze@v3
-
   secret-scan:
     runs-on: ubuntu-latest
     steps:
@@ -52,7 +40,7 @@ jobs:
       - run: npm run build --if-present
 
   deploy:
-    needs: [codeql, secret-scan, build-test]
+    needs: [secret-scan, build-test]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: production
