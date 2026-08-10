@@ -5,6 +5,10 @@
 # file, and nowhere else.
 name: Release notes
 
+permissions:
+  contents: read
+  issues: write
+
 on:
   workflow_dispatch:
 
@@ -20,7 +24,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
-          echo "Creating the release-notes issue…"
+          echo "Creating the release-notes issue..."
           code=$(curl -s -o /tmp/out.json -w '%{http_code}' \
             -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
