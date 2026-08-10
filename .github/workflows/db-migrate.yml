@@ -1,0 +1,27 @@
+# Applies database migrations.
+#
+# BROKEN ON PURPOSE (HealCI test case): the job needs DATABASE_URL and the workflow never maps it into the
+# step, so the runner hands the step an empty string. The fix is an `env:` block — which lives in this file,
+# and nowhere else.
+name: DB migrate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    name: Run database migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply migrations
+        # No `env:` block. DATABASE_URL is a repository secret, and GitHub does not inject one unless it is
+        # named here.
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Error: DATABASE_URL resolved to an empty string."
+            echo "The migration cannot run without a connection string."
+            exit 1
+          fi
+          echo "would run migrations against $DATABASE_URL"

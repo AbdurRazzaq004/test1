@@ -1,0 +1,25 @@
+# Nightly reachability check against the configured API base.
+#
+# BROKEN ON PURPOSE (HealCI test case): the step reads ${{ env.API_BASE }}, and no `env:` is ever defined at
+# workflow or job level, so it expands to an empty string and curl is called with no URL. The fix is to
+# define API_BASE — which lives in this file, and nowhere else.
+name: Nightly check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check the API is reachable
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reach the API
+        run: |
+          BASE="${{ env.API_BASE }}"
+          if [ -z "$BASE" ]; then
+            echo "Error: API_BASE is empty — the workflow defines no env for it."
+            exit 1
+          fi
+          curl -fsS "$BASE/health"
