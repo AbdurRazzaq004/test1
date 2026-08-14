@@ -6,7 +6,11 @@
  * the test below proves the fix. This is the shape that should auto-heal.
  */
 function total(items) {
-  return items.reduce((sum, item) => sum + item.price, 0);
+  return items.reduce((sum, item) => sum + item.quantity * item.price, 0);
 }
 
-module.exports = { total };
+function getTotal(quantity, price) {
+  return quantity * price;
+}
+
+module.exports = { total, getTotal };
