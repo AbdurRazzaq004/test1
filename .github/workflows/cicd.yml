@@ -1,0 +1,23 @@
+The file is empty, so I need to create a workflow file that includes the job 'Check the API is reachable' with the step 'Reach the API', and properly maps the API_BASE variable into the job environment.
+
+name: CI/CD
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  check-api:
+    name: Check the API is reachable
+    runs-on: ubuntu-latest
+    env:
+      API_BASE: ${{ vars.API_BASE }}
+    steps:
+      - name: Reach the API
+        run: |
+          BASE="$API_BASE"
+          if [ -z "$BASE" ]; then
+            echo "API_BASE is empty"
+            exit 1
+          fi
+          curl --fail "$BASE"
